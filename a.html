@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="cantainer">
+    <p id="result">去哪儿旅游呢？</p>
+    <div class="turntable" id="turntable">
+    </div>
+    <div class="pointer"></div>
+    <div class="action">
+      出发
+    </div>
+  </div>
+  
+
+  <script type="text/javascript">
+    const item_height = 180
+    const item_width = 22
+    let flag = false;
+    const cities = [
+      '在家', '深圳', '黑龙江', '长白山', '婺源', '九寨沟', '神龙架', '稻城亚丁', '潮汕', '珠海', 
+      '成都', '天津','淄博', '连云港', '青岛', '济南','烟台', '西藏','威海', '南京',
+      '武汉', '重庆','厦门', '嘉兴', '长沙', '湛江','澳门', '新疆', '大理', '云南',
+      '延吉', '香港','香格里拉', '鼓浪屿', '扬州', '杭州','昆明', '大连','苏州', '桂林',
+      '西双版纳', '张家界','天水', '洛阳', '上海', '北京','西安', '广州',
+    ]
+
+    let g = 0;
+    initPanel();
+
+
+    const pointerEle = document.querySelector(".pointer")
+    const actionEle = document.querySelector(".action")
+    const resultEle = document.getElementById('result')
+    actionEle.addEventListener("click", handleStart);
+
+
+    function handleStart() {
+      let angle = 0;
+      const max = Math.floor(Math.random() * 1440)
+      if(flag) {
+        return
+      }
+      flag = true;
+      const timer = setInterval(() => {
+        angle += g
+        if(angle >= max) {
+          clearInterval(timer)
+          const r = getResult(angle);
+          resultEle.innerHTML = r;
+          flag = false;
+        } else {
+          pointerEle.setAttribute('style', `transform: translate(169px, 60px) rotate(${angle}deg)`);
+        }
+      }, 40)
+    }
+
+    function getResult(angle) {
+      const index = Math.floor(angle / g);
+      const i = index % cities.length - 1;
+      return i === 0 ? `ohno,在家吧！` : `${cities[i]}走起！！！`
+    }
+
+    function initPanel() {
+      const paneEle = document.getElementById('turntable')
+      g = 360 / cities.length
+      for (let index = 0; index < cities.length; index++) {
+        const element = cities[index];
+        const item = document.createElement('div');
+        item.setAttribute('class', 'item');
+        item.setAttribute('style', `background: ${getColorHex()};transform:translate(${item_height - (item_width / 2)}px, 0px) rotate(${g * index}deg)`)
+        // item.innerHTML = element;
+        for (let i = 0; i < element.length; i++) {
+          const char = element[i];
+          const span = document.createElement('span')
+          span.innerHTML = char;
+          item.appendChild(span);
+        }
+        paneEle.appendChild(item)
+      }
+    }
+    
+    function getColorHex() {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+
+      const rHex = r.toString(16).padStart(2, '0');
+      const gHex = g.toString(16).padStart(2, '0');
+      const bHex = b.toString(16).padStart(2, '0');
+      
+      const c = `#${rHex}${gHex}${bHex}99`
+      // console.log(c);
+      return c
+    }
+  </script>
+</body>
+<style>
+  html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+  }
+  .cantainer {
+    margin: auto;
+    position: relative;
+  }
+  #result {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    font-weight: bold;
+    background: linear-gradient(89.1deg, #3D7BFF 0.59%, #B325FF 100.65%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .turntable {
+    width: 360px;
+    height: 360px;
+    color: white;
+    /* background-color: black; */
+    font-weight: bold;
+    position: relative;
+  }
+  .item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 22px; 
+    height: 180px;
+    text-align: center;
+    transform-origin: bottom;
+    clip-path: path("M 0 0 L 22 0 L 11 180 Z");
+    /* padding: 12px 0; */
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .item span:first-child {
+    margin-top: 6px;
+  }
+
+  .pointer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(169px, 60px);
+    transform-origin: bottom;
+    width: 22px;
+    height: 120px;
+    background: linear-gradient(89.1deg, #3D7BFF 0.59%, #B325FF 100.65%);
+    clip-path: path("M 11 0 L 22 120 L 0 120 Z");
+  }
+  .action {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(89.1deg, #3D7BFF 0.59%, #B325FF 100.65%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+  }
+  #canvas {
+    background-color: black;
+  }
+  button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+</html>
